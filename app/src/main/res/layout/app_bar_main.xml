@@ -37,7 +37,7 @@
             android:layout_gravity="bottom"
             android:layout_margin="@dimen/fab_margin"
             android:layout_weight="1"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/green"
             app:srcCompat="@drawable/ic_phone" />
 
         <android.support.design.widget.FloatingActionButton
@@ -57,7 +57,7 @@
             android:layout_gravity="bottom"
             android:layout_margin="@dimen/fab_margin"
             android:layout_weight="1"
-            app:backgroundTint="@color/green"
+            app:backgroundTint="@color/colorPrimary"
             app:srcCompat="@drawable/ic_linked_in"/>
 
         <android.support.design.widget.FloatingActionButton

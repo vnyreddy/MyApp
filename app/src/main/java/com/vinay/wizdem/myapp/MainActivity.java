@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.SmsManager;
 import android.text.InputType;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.content_text);
+        textView.setText(R.string.home);
+        textView.setTextSize(25);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
         phone_number=getString(R.string.phone_number);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -274,15 +279,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-            textView.setText(R.string.home);
+
         int id = item.getItemId();
 
         if (id == R.id.profile) {
             textView.setText(R.string.about_me);
+            textView.setTextSize(25);
         } else if (id == R.id.work) {
             textView.setText(R.string.experience);
+            textView.setTextSize(25);
         } else if (id == R.id.contact) {
             textView.setText(R.string.contact);
+            textView.setTextSize(20);
         }else if(id == R.id.nav_share){
             shareIntent();
         }

@@ -6,4 +6,8 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_size">25dp</dimen>
+    <dimen name="textview_padding_top">30dp</dimen>
+    <dimen name="textview_padding_bottom">75dp</dimen>
+    <dimen name="textview_padding_left">20dp</dimen>
+    <dimen name="textview_padding_right">20dp</dimen>
 </resources>
