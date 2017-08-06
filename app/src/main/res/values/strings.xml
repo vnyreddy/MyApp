@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">MyApp</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="name">Vinay Reddy</string>
+    <string name="email">vny.developer@gmail.com</string>
+    <string name="home">Welcome to MyApp. My name is Vinay, and this is my personal application. MyApp has menu left side, there you can find more about me. There are few more other below, you can discover me even more, and you can also call or text me right form MyApp. \n Thank you, \n -Vinay.</string>
+    <string name="about_me">I am a passionate Android Developer , a highly motivated and experienced developer who consider not only a job, but hobby.</string>
+    <string name="experience">Well experienced in Android, Java, and other mobile development technologies. Worked in verity of companies and applications which gives extensive knowledge and experience in many technologies. To know more about my experience please follow below LinkedIn button.</string>
+    <string name="contact">Phone: +1(302) 357 4970 \n Skype: vny.developer \n e-mail:vny.developer@gmail.com</string>
+    <string name="phone_number">tel:+1-302-357-4970</string>
+    <string name="ln_link">https://www.linkedin.com/in/vinay-reddy-6464a4132/</string>
+    <string name="stack_link">https://stackoverflow.com/users/8372240/vny</string>
+    <string name="app_link">https://play.google.com/store/apps/details?id=com.vinay.wizdem.myapp</string>
+    <string name="share_hint">Share MyApp to..</string>
+
+</resources>
