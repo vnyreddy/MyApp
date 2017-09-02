@@ -1,21 +1,16 @@
-package com.vinay.wizdem.myapp;
+package com.vinay.wizdem.myapp.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.SmsManager;
 import android.text.InputType;
@@ -34,31 +29,57 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.vinay.wizdem.myapp.FireBase.LoadData;
+import com.vinay.wizdem.myapp.Interfaces.FetchData;
+import com.vinay.wizdem.myapp.Models.AppData;
+import com.vinay.wizdem.myapp.R;
+import com.vinay.wizdem.myapp.Utils.Util;
 
-    private TextView textView;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, FetchData {
+
+    private TextView textView, nav_name, nav_email;
     private FloatingActionButton phone, message, linkedin, stack;
     private static final int CALL_PERMEISSIONS_REQUEST=1;
     private static final int SMS_PERMISSION_REQUEST=2;
     private String phone_number;
+    private String s;
+    private LoadData loadData;
+    private AppData mAppData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.content_text);
-        textView.setText(R.string.home);
-        textView.setTextSize(25);
-        textView.setMovementMethod(new ScrollingMovementMethod());
-
-        phone_number=getString(R.string.phone_number);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         phone = (FloatingActionButton) findViewById(R.id.phone);
         message = (FloatingActionButton) findViewById(R.id.message);
         linkedin = (FloatingActionButton) findViewById(R.id.ln);
         stack = (FloatingActionButton) findViewById(R.id.stack);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        nav_name = (TextView)findViewById(R.id.nav_name);
+        nav_email = (TextView)findViewById(R.id.nav_email);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if(isNetworkConnected()){
+
+            loadData = new LoadData();
+          //  loadData.getFirebaseData();
+            loadData.getAssignData(this);
+
+        }else {
+            Util.noInternetToast(MainActivity.this);
+        }
+
         phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,9 +97,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if(isNetworkConnected()){
-                    openWebView(getString(R.string.ln_link));
+                    openWebView(mAppData.ln_link.toString());
                 }else {
-                    Toast.makeText(MainActivity.this,"No Internet..",Toast.LENGTH_SHORT).show();
+                    Util.noInternetToast(MainActivity.this);
                 }
 
             }
@@ -87,21 +108,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                if(isNetworkConnected()){
-                    openWebView(getString(R.string.stack_link));
+                    openWebView(mAppData.stack_link.toString());
                }else {
-                   Toast.makeText(MainActivity.this,"No Internet..",Toast.LENGTH_SHORT).show();
+                   Util.noInternetToast(MainActivity.this);
                }
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void messageComposeDialog() {
@@ -126,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                         String text = input.getText().toString();
                         if(text != null && !text.isEmpty() ){
                             SmsManager smsManager = SmsManager.getDefault();
-                            smsManager.sendTextMessage(phone_number, null, text, null, null);
+                            smsManager.sendTextMessage(mAppData.phone_number.toString(), null, text, null, null);
                             Toast.makeText(MainActivity.this,"Sending SMS to Vinay..",Toast.LENGTH_SHORT).show();
                             mAlertdlg.dismiss();
                         }else {
@@ -166,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
 
                 Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-                phoneIntent.setData(Uri.parse(phone_number));
+                phoneIntent.setData(Uri.parse(mAppData.phone_number.toString()));
                 startActivity(phoneIntent);
                 dialog.dismiss();
             }
@@ -283,13 +297,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.profile) {
-            textView.setText(R.string.about_me);
+            textView.setText(mAppData.about_me.toString());
             textView.setTextSize(25);
         } else if (id == R.id.work) {
-            textView.setText(R.string.experience);
+            textView.setText(mAppData.experience.toString());
             textView.setTextSize(25);
         } else if (id == R.id.contact) {
-            textView.setText(R.string.contact);
+            textView.setText(mAppData.phone_number.toString()+" \n"+"Skype: "+
+                    mAppData.skype.toString()+" \n"+mAppData.email.toString());
             textView.setTextSize(20);
         }else if(id == R.id.nav_share){
             shareIntent();
@@ -303,8 +318,18 @@ public class MainActivity extends AppCompatActivity
     void shareIntent(){
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, getText(R.string.app_link));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, mAppData.app_link.toString());
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_hint)));
+    }
+
+    @Override
+    public void assignData(AppData appData) {
+        this.mAppData = appData;
+        textView.setText(mAppData.home.toString());
+        textView.setTextSize(25);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+        nav_name.setText(mAppData.name.toString());
+        nav_email.setText(mAppData.email.toString());
     }
 }
