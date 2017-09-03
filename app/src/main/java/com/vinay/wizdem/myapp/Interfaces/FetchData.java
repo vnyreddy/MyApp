@@ -9,4 +9,5 @@ import com.vinay.wizdem.myapp.Models.AppData;
 public interface FetchData {
 
     public void assignData(AppData appData);
+    public void databaseError();
 }

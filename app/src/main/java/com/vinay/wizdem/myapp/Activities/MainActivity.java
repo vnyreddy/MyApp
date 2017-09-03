@@ -1,6 +1,7 @@
 package com.vinay.wizdem.myapp.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +42,8 @@ public class MainActivity extends AppCompatActivity
 
     private TextView textView, nav_name, nav_email;
     private FloatingActionButton phone, message, linkedin, stack;
-    private static final int CALL_PERMEISSIONS_REQUEST=1;
-    private static final int SMS_PERMISSION_REQUEST=2;
+    private static final int CALL_PERMEISSIONS_REQUEST = 1;
+    private static final int SMS_PERMISSION_REQUEST = 2;
     private String phone_number;
     private String s;
     private LoadData loadData;
@@ -66,17 +68,18 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        nav_name = (TextView)findViewById(R.id.nav_name);
-        nav_email = (TextView)findViewById(R.id.nav_email);
+        View headerLayout = navigationView.getHeaderView(0);
+        nav_name = (TextView) headerLayout.findViewById(R.id.nav_name);
+        nav_email = (TextView) headerLayout.findViewById(R.id.nav_email);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if(isNetworkConnected()){
+        if (isNetworkConnected()) {
 
             loadData = new LoadData();
-          //  loadData.getFirebaseData();
+            //  loadData.getFirebaseData();
             loadData.getAssignData(this);
 
-        }else {
+        } else {
             Util.noInternetToast(MainActivity.this);
         }
 
@@ -96,10 +99,14 @@ public class MainActivity extends AppCompatActivity
         linkedin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isNetworkConnected()){
-                    openWebView(mAppData.ln_link.toString());
-                }else {
-                    Util.noInternetToast(MainActivity.this);
+                if (mAppData != null && mAppData.getLn_link() != null) {
+                    if (isNetworkConnected()) {
+                        openWebView(mAppData.getLn_link());
+                    } else {
+                        Util.noInternetToast(MainActivity.this);
+                    }
+                } else {
+                    Util.nullMessageToast(MainActivity.this);
                 }
 
             }
@@ -107,60 +114,68 @@ public class MainActivity extends AppCompatActivity
         stack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               if(isNetworkConnected()){
-                    openWebView(mAppData.stack_link.toString());
-               }else {
-                   Util.noInternetToast(MainActivity.this);
-               }
+                if (mAppData != null && mAppData.getStack_link() != null) {
+                    if (isNetworkConnected()) {
+                        openWebView(mAppData.getStack_link());
+                    } else {
+                        Util.noInternetToast(MainActivity.this);
+                    }
+                } else {
+                    Util.nullMessageToast(MainActivity.this);
+                }
+
             }
         });
-
-
     }
 
     private void messageComposeDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("SMS");
+        if (mAppData != null && mAppData.getPhone_number() != null) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("SMS");
 
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        input.setHint("Compose Text for Vinay..");
-        builder.setView(input);
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+            input.setHint("Compose Text for Vinay..");
+            builder.setView(input);
 
-        builder.setPositiveButton("Send", null);
-        builder.setNegativeButton("Cancel", null);
-        final AlertDialog mAlertdlg = builder.create();
-        mAlertdlg.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button send = mAlertdlg.getButton(AlertDialog.BUTTON_POSITIVE);
-                send.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String text = input.getText().toString();
-                        if(text != null && !text.isEmpty() ){
-                            SmsManager smsManager = SmsManager.getDefault();
-                            smsManager.sendTextMessage(mAppData.phone_number.toString(), null, text, null, null);
-                            Toast.makeText(MainActivity.this,"Sending SMS to Vinay..",Toast.LENGTH_SHORT).show();
-                            mAlertdlg.dismiss();
-                        }else {
-                            Toast.makeText(MainActivity.this,"Enter text message..",Toast.LENGTH_SHORT).show();
+            builder.setPositiveButton("Send", null);
+            builder.setNegativeButton("Cancel", null);
+            final AlertDialog mAlertdlg = builder.create();
+            mAlertdlg.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button send = mAlertdlg.getButton(AlertDialog.BUTTON_POSITIVE);
+                    send.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String text = input.getText().toString();
+                            if (text != null && !text.isEmpty()) {
+                                SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(mAppData.getPhone_number(), null, text, null, null);
+                                Toast.makeText(MainActivity.this, "Sending SMS to Vinay..", Toast.LENGTH_SHORT).show();
+                                mAlertdlg.dismiss();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Enter text message..", Toast.LENGTH_SHORT).show();
 
+                            }
                         }
-                    }
-                });
+                    });
 
-                Button cancel = mAlertdlg.getButton(AlertDialog.BUTTON_NEGATIVE);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mAlertdlg.dismiss();
-                    }
-                });
-            }
-        });
+                    Button cancel = mAlertdlg.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mAlertdlg.dismiss();
+                        }
+                    });
+                }
+            });
 
-        mAlertdlg.show();
+            mAlertdlg.show();
+        } else {
+            Util.noContactToast(MainActivity.this);
+        }
+
     }
 
     private boolean isNetworkConnected() {
@@ -170,41 +185,46 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void callConfirmDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (mAppData !=null && mAppData.getPhone_number() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Please Confirm..");
-        builder.setMessage("You want to call Vinay Reddy?");
+            builder.setTitle("Please Confirm..");
+            builder.setMessage("You want to call Vinay Reddy?");
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which) {
 
-                Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-                phoneIntent.setData(Uri.parse(mAppData.phone_number.toString()));
-                startActivity(phoneIntent);
-                dialog.dismiss();
-            }
-        });
+                    Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+                    phoneIntent.setData(Uri.parse(mAppData.getPhone_number()));
+                    startActivity(phoneIntent);
+                    dialog.dismiss();
+                }
+            });
 
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                // Do nothing
-                dialog.dismiss();
-            }
-        });
+                    // Do nothing
+                    dialog.dismiss();
+                }
+            });
 
-        AlertDialog alert = builder.create();
-        alert.show();
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            Util.noContactToast(MainActivity.this);
+        }
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case CALL_PERMEISSIONS_REQUEST:{
+        switch (requestCode) {
+            case CALL_PERMEISSIONS_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     callConfirmDialog();
                 } else {
@@ -212,45 +232,36 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             }
-            case SMS_PERMISSION_REQUEST:{
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            case SMS_PERMISSION_REQUEST: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     messageComposeDialog();
-                }else {
-                    Toast.makeText(MainActivity.this,"MyApp was denied SMS permissions.",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "MyApp was denied SMS permissions.", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
         }
     }
 
-    void callPhoneRequestPermission(){
-
+    void callPhoneRequestPermission() {
         if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.CALL_PHONE}, CALL_PERMEISSIONS_REQUEST);
-
-        }else {
+        } else {
             callConfirmDialog();
         }
-
     }
 
-    void messageRequestPermission(){
-            if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.SEND_SMS},SMS_PERMISSION_REQUEST);
-
-
-            }else {
-                messageComposeDialog();
-            }
-
-
+    void messageRequestPermission() {
+        if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_REQUEST);
+        } else {
+            messageComposeDialog();
+        }
     }
 
-    void openWebView(String link){
+    void openWebView(String link) {
         Uri uri = Uri.parse(link);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
@@ -279,13 +290,10 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.share_link) {
             shareIntent();
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -293,43 +301,62 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
         int id = item.getItemId();
-
-        if (id == R.id.profile) {
-            textView.setText(mAppData.about_me.toString());
-            textView.setTextSize(25);
-        } else if (id == R.id.work) {
-            textView.setText(mAppData.experience.toString());
-            textView.setTextSize(25);
-        } else if (id == R.id.contact) {
-            textView.setText(mAppData.phone_number.toString()+" \n"+"Skype: "+
-                    mAppData.skype.toString()+" \n"+mAppData.email.toString());
-            textView.setTextSize(20);
-        }else if(id == R.id.nav_share){
-            shareIntent();
+        if(mAppData != null){
+            if (id == R.id.profile) {
+                textView.setText(mAppData.getAbout_me());
+                textView.setTextSize(25);
+            } else if (id == R.id.work) {
+                textView.setText(mAppData.getExperience());
+                textView.setTextSize(25);
+            } else if (id == R.id.contact) {
+                if(mAppData.getPhone_number() != null && mAppData.getSkype() != null && mAppData.getEmail() != null){
+                    textView.setText(mAppData.getPhone_number() + " \n" + "Skype: " +
+                            mAppData.getSkype() + " \n" + mAppData.getEmail());
+                    textView.setTextSize(20);
+                }else {
+                    textView.setText("Hu! No Contact Available At This Time.");
+                    Util.noContactToast(MainActivity.this);
+                }
+            } else if (id == R.id.nav_share) {
+                shareIntent();
+            }
+        }else {
+            Util.nullMessageToast(MainActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    void shareIntent() {
+        if(mAppData != null){
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.show();
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, mAppData.getApp_link());
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_hint)));
+            progressDialog.dismiss();
 
-    void shareIntent(){
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, mAppData.app_link.toString());
-        sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_hint)));
+        }else {
+            Util.nullMessageToast(MainActivity.this);
+        }
+
     }
 
     @Override
     public void assignData(AppData appData) {
         this.mAppData = appData;
-        textView.setText(mAppData.home.toString());
+        textView.setText(mAppData.getHome());
         textView.setTextSize(25);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        nav_name.setText(mAppData.name.toString());
-        nav_email.setText(mAppData.email.toString());
+        nav_name.setText(mAppData.getName());
+        nav_email.setText(mAppData.getEmail());
+    }
+    @Override
+    public void databaseError() {
+        Toast.makeText(MainActivity.this,"Sorry!! There is a Database Error!!",Toast.LENGTH_SHORT).show();
     }
 }

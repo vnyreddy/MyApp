@@ -17,10 +17,6 @@ public class LoadData {
     private DatabaseReference mFirebaseReference, ref;
     private AppData mAppData;
 
-    public void getFirebaseData(){
-
-    }
-
     public void getAssignData(final FetchData fetchData){
         mFirebaseReference = FirebaseDatabase.getInstance().getReference();
         ref = mFirebaseReference.child("app_info");
@@ -28,16 +24,8 @@ public class LoadData {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
-                    mAppData = dataSnapshot.getValue(AppData.class);
-                    fetchData.assignData(mAppData);
-
-                    try {
-                            /*nav_name.setText(mAppData.name.toString());
-                            nav_email.setText(mAppData.email.toString());*/
-                        //  textView.setText(mAppData.home.toString());
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+                        mAppData = dataSnapshot.getValue(AppData.class);
+                        fetchData.assignData(mAppData);
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -46,7 +34,7 @@ public class LoadData {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                fetchData.databaseError(); //not working need to check
             }
         });
 

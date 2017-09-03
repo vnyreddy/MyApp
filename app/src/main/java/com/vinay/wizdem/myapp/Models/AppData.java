@@ -6,8 +6,9 @@ package com.vinay.wizdem.myapp.Models;
 
 public class AppData {
 
-    public String about_me, app_link, skype, email,
+    private String about_me, app_link, skype, email,
             experience, home, ln_link, name, phone_number, stack_link;
+    private static final String HU_MESSAGE = "Huu! Data not found..";
     public AppData(){
 
     }
@@ -27,42 +28,61 @@ public class AppData {
     }
 
     public String getAbout_me() {
-        return about_me;
+        if(about_me == null){
+            return HU_MESSAGE;
+        }else return about_me;
     }
 
     public String getApp_link() {
-        return app_link;
+        if(app_link == null){
+            return HU_MESSAGE;
+        }else return app_link;
     }
 
     public String getSkype() {
-        return skype;
+        if(skype == null){
+            return "Hu! skype not found..";
+        }else return skype;
     }
 
     public String getEmail() {
-        return email;
+        if(email == null){
+            return "Hu! email not found..";
+        }else return email;
     }
 
     public String getExperience() {
-        return experience;
+        if(experience == null){
+            return HU_MESSAGE;
+        } else return experience;
     }
 
     public String getHome() {
-        return home;
+        if(home == null){
+            return HU_MESSAGE;
+        }else return home;
     }
 
     public String getLn_link() {
+        //validations at MainActivity
         return ln_link;
     }
 
     public String getName() {
+        //validations at MainActivity
+
         return name;
     }
 
     public String getPhone_number() {
+        //validations at MainActivity
+
         return phone_number;
     }
 
     public String getStack_link() {
+        //validations at MainActivity
+
         return stack_link;
     }
 }

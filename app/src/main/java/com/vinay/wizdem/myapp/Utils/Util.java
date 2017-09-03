@@ -14,4 +14,10 @@ public class Util {
     public static void noInternetToast(Context context){
         Toast.makeText(context,"No Internet..",Toast.LENGTH_SHORT).show();
     }
+    public static void nullMessageToast(Context context){
+        Toast.makeText(context,"Hu! No Data Available ..",Toast.LENGTH_SHORT).show();
+    }
+    public static void noContactToast(Context context){
+        Toast.makeText(context,"Hu! No Contact Available..",Toast.LENGTH_SHORT).show();
+    }
 }
