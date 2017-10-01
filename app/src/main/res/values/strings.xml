@@ -17,5 +17,6 @@
     <string name="stack_link">https://stackoverflow.com/users/8372240/vny</string>
     <string name="app_link">https://play.google.com/store/apps/details?id=com.vinay.wizdem.myapp</string>
     <string name="share_hint">Share MyApp to..</string>
+    <string name="title_activity_history">HistoryActivity</string>
 
 </resources>

@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity
             if (id == R.id.profile) {
                 textView.setText(mAppData.getAbout_me());
                 textView.setTextSize(25);
+
             } else if (id == R.id.work) {
                 textView.setText(mAppData.getExperience());
                 textView.setTextSize(25);
