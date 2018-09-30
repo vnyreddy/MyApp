@@ -1,21 +1,16 @@
 package com.vinay.wizdem.myapp;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.SmsManager;
 import android.text.InputType;
@@ -162,7 +157,7 @@ public class MainActivity extends AppCompatActivity
 
                 Intent phoneIntent = new Intent(Intent.ACTION_CALL);
                 phoneIntent.setData(Uri.parse(phone_number));
-                startActivity(phoneIntent);
+              //  startActivity(phoneIntent);
                 dialog.dismiss();
             }
         });
